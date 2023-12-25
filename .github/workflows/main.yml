@@ -14,9 +14,12 @@ jobs:
 
       - name: Setup Server
         run: |
-          echo "$SSH_PRIVATE_KEY" > $HOME/.ssh/id_rsa
-          chmod 600 $HOME/.ssh/id_rsa
-          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > $HOME/.ssh/config
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+   
+          ssh-keyscan -t rsa ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
           sudo apt-get update
           sudo apt-get install -y ssh
 
@@ -32,3 +35,5 @@ jobs:
         run: |
           scp -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./nginx-config/ ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config
           ssh -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }} 'bash -s' < ./nginx-config/setup.sh
+
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r ./* ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:/home/ubuntu/

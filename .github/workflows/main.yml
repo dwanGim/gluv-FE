@@ -1,4 +1,4 @@
-name: Setup Server
+name: Setup FEServer
 
 on:
   push:
@@ -17,22 +17,8 @@ jobs:
           host: ${{ secrets.SERVER_HOST }} 
           username: ${{ secrets.AWS_SSH_USER }}
           key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
-          script: |
-            # 파이썬 설치
-            sudo apt update -y
-            sudo apt install -y python3
-            sudo apt install -y python3-pip 
-            sudo apt install -y python3-venv
-            # docker 설치
-            sudo curl -fsSL https://get.docker.com -o get-docker.sh
-            sudo sh get-docker.sh
-            # 도커 그룹에 사용자 추가
-            sudo usermod -aG docker $USER
-            newgrp docker
-            # 도커 자동 실행 설정
-            sudo systemctl start docker
-            sudo systemctl enable docker
-            # test
-            echo ${{ secrets.AWS_SSH_USER }}
-            scp -i ${{ secrets.AWS_SSH_PRIVATE_KEY }} -r ./* ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:/home/ubuntu/test
-        
+          script: 
+            # nginx 설치
+            echo abc
+            
+

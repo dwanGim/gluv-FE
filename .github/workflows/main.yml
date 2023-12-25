@@ -20,7 +20,6 @@ jobs:
           echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > $HOME/.ssh/config
           sudo apt-get update
           sudo apt-get install -y ssh
-          ls -la $HOME/.ssh  # 디버깅을 위해 .ssh 디렉토리 내용 출력
 
   deploy:
     needs: setup-server
@@ -32,6 +31,7 @@ jobs:
 
       - name: Copy Nginx Configuration
         run: scp -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./nginx-config/ ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config
+
 
       - name: Run Setup Script on Remote Server
         run: ssh -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }} 'bash -s' < ./nginx-config/setup.sh

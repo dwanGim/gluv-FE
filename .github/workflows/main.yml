@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Copy Nginx Configuration
-        run: scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./nginx-config/ ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config
+        run: scp -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./nginx-config/ ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config
 
       - name: Run Setup Script on Remote Server
-        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }} 'bash -s' < ./nginx-config/setup.sh
+        run: ssh -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }} 'bash -s' < ./nginx-config/setup.sh

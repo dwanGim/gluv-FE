@@ -14,13 +14,13 @@ jobs:
 
       - name: Setup Server
         run: |
-          mkdir -p $RUNNER_HOME/.ssh
-          echo "$SSH_PRIVATE_KEY" > $RUNNER_HOME/.ssh/id_rsa
-          chmod 600 $RUNNER_HOME/.ssh/id_rsa
-          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > $RUNNER_HOME/.ssh/config
+          mkdir -p $HOME/.ssh
+          echo "$SSH_PRIVATE_KEY" > $HOME/.ssh/id_rsa
+          chmod 600 $HOME/.ssh/id_rsa
+          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > $HOME/.ssh/config
           sudo apt-get update
           sudo apt-get install -y ssh
-          ls -la $RUNNER_HOME/.ssh  # 디버깅을 위해 .ssh 디렉토리 내용 출력
+          ls -la $HOME/.ssh  # 디버깅을 위해 .ssh 디렉토리 내용 출력
 
   deploy:
     needs: setup-server
@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Copy Nginx Configuration
-        run: scp -i $RUNNER_HOME/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./nginx-config/ ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config
+        run: scp -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./nginx-config/ ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config
 
       - name: Run Setup Script on Remote Server
-        run: ssh -i $RUNNER_HOME/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }} 'bash -s' < ./nginx-config/setup.sh
+        run: ssh -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }} 'bash -s' < ./nginx-config/setup.sh

@@ -14,12 +14,9 @@ jobs:
 
       - name: Setup Server
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-   
-          ssh-keyscan -t rsa ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
+          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
           sudo apt-get update
           sudo apt-get install -y ssh
 
@@ -31,9 +28,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Deploy Nginx Configuration
-        run: |
-          scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./nginx-config/ ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }} 'bash -s' < ./nginx-config/setup.sh
+      - name: Copy Nginx Configuration
+        run: scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./nginx-config/ ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config
 
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r ./* ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:/home/ubuntu/
+      - name: Run Setup Script on Remote Server
+        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }} 'bash -s' < ./nginx-config/setup.sh

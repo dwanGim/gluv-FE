@@ -20,6 +20,7 @@ jobs:
           echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > $HOME/.ssh/config
           sudo apt-get update
           sudo apt-get install -y ssh
+          ls -la $HOME/.ssh  # 디버깅을 위해 .ssh 디렉토리 내용 출력
 
   deploy:
     needs: setup-server

@@ -21,7 +21,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ssh
 
-
   deploy:
     needs: setup-server
     runs-on: ubuntu-latest
@@ -30,6 +29,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Debug SSH Key
+        run: |
+          ls -la $HOME/.ssh
+          cat $HOME/.ssh/id_rsa
+
+      - name: Debug Known Hosts
+        run: cat $HOME/.ssh/known_hosts
+        
       - name: Copy Nginx Configuration
         run: scp -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./nginx-config/ ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config
 

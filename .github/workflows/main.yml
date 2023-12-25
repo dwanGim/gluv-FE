@@ -34,9 +34,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
       - name: Run Setup Script on Remote Server
         run: |
           scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ./nginx-config/setup.sh ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config/

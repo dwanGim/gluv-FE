@@ -18,9 +18,7 @@ jobs:
           username: ${{ secrets.AWS_SSH_USER }}
           key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
           script: 
-            apt update
-            apt install nginx
-
+            # nginx 설정 파일 업로드
             echo "server {
                      listen 80;
                      server_name  ${{ secrets.SERVER_HOST }};
@@ -41,7 +39,4 @@ jobs:
             ln -s /etc/nginx/sites-available/my-site /etc/nginx/sites-enabled/my-site
             nginx -t
             service nginx restart
-                  }
-      
-
 

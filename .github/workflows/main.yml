@@ -18,27 +18,30 @@ jobs:
           username: ${{ secrets.AWS_SSH_USER }}
           key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
           script: 
-            # nginx 설치
-            sudo apt update
-            sudo apt install nginx
+            apt update
+            apt install nginx
 
-            server {
-              listen 80;
-              server_name  ${{ secrets.SERVER_HOST }};
-          
-              location / {
-                  root C:\myWorkplace\dwanGim_FE;
-                  index index.html;
-              }
-          
-              location /api/ {
-                  proxy_pass http://localhost:3001;
-                  proxy_set_header ${{ secrets.SERVER_HOST }};
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
-              }
-            }
-
+            echo "server {
+                     listen 80;
+                     server_name  ${{ secrets.SERVER_HOST }};
+                 
+                     location / {
+                         root C:\myWorkplace\dwanGim_FE;
+                         index index.html;
+                     }
+                 
+                     location /api/ {
+                         proxy_pass http://localhost:3001;
+                         proxy_set_header Host $host;
+                         proxy_set_header X-Real-IP $remote_addr;
+                         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                         proxy_set_header X-Forwarded-Proto $scheme;
+                     }
+                 }" > /etc/nginx/sites-available/my-site
+            ln -s /etc/nginx/sites-available/my-site /etc/nginx/sites-enabled/my-site
+            nginx -t
+            service nginx restart
+                  }
+      
 
 

@@ -14,7 +14,9 @@ jobs:
 
       - name: Setup Server
         run: |
-          run: echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+          mkdir -p $HOME/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 $HOME/.ssh/id_rsa
           echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
           sudo apt-get update
           sudo apt-get install -y ssh

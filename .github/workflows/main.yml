@@ -3,42 +3,20 @@ name: Setup and Deploy Server
 on:
   push:
     branches: [ "main" ]
-
+    
 jobs:
   setup-server:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Setup Server
+      - uses: actions/checkout@v3
+            
+      - name: Setup Server and Deploy Server
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-          sudo apt-get update
-          sudo apt-get install -y ssh
-
-
-
-  deploy:
-    needs: setup-server
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Run Setup Script on Remote Server
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-          sudo apt-get update
-          sudo apt-get install -y ssh
-          scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ./nginx-config/setup.sh ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config/
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }} 'bash -s' < ~/nginx-config/setup.sh
-
-      - name: Copy Nginx Configuration
-        run: scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./nginx-config/ ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config
-      
+            mkdir -p ~/.ssh
+            echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan -t rsa ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+            chmod 644 ~/.ssh/known_hosts
+            scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ./nginx-config/setup.sh ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-conf
+            ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }} 'bash -s' < ~/nginx-config

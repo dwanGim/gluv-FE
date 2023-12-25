@@ -32,7 +32,7 @@ jobs:
 
       - name: Run Setup Script on Remote Server
         run: |
-          scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ./nginx-config/setup.sh ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config/
+          scp -i ~/.ssh/id_rsa ./nginx-config/setup.sh ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }}:~/nginx-config/
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.AWS_SSH_USER }}@${{ secrets.SERVER_HOST }} 'bash -s' < ~/nginx-config/setup.sh
 
       - name: Copy Nginx Configuration

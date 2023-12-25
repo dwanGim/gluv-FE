@@ -13,6 +13,7 @@ jobs:
             
       - name: Setup Server and Deploy Server
         run: |
+            echo ${{ github.workspace }}
             mkdir -p ~/.ssh
             echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa

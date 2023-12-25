@@ -12,14 +12,21 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Debug GitHub Actions Environment
+        run: |
+          echo "HOME: ~/"
+          ls -la ~/
+
+
       - name: Setup Server
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+          mkdir -p $HOME/.ssh
+          echo "$SSH_PRIVATE_KEY" > $HOME/.ssh/id_rsa
+          chmod 600 $HOME/.ssh/id_rsa
+          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > $HOME/.ssh/config
           sudo apt-get update
           sudo apt-get install -y ssh
+
 
 
   deploy:
@@ -28,7 +35,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Run Setup Script on Remote Server
         run: |
